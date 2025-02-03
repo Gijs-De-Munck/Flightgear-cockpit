@@ -1,0 +1,1 @@
+This repository has software for a arduino to process data gotten from flightgear and controll stepper motors and a 2.3" touchscreen shield the instruments are: e-vario, turn indicator, altimeter, compass, variometer and airspeed meter.
