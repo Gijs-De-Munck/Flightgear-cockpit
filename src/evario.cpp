@@ -1,6 +1,5 @@
 #include <evario.hpp>
 
-
 void updateVario(MCUFRIEND_kbv &tft, float sink, float temperature) {
     static float previous_sink = NAN;
     if(sink != previous_sink) {
@@ -10,7 +9,6 @@ void updateVario(MCUFRIEND_kbv &tft, float sink, float temperature) {
         writeTemperature(tft, temperature);
     }
 }
-
 
 void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
     static float previous_sink = NAN;
@@ -26,7 +24,6 @@ void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
     tft.print(abs(sink), 1);
     previous_sink = sink;
 }
-
 
 void drawVarioArrow(MCUFRIEND_kbv &tft, float sink) {
     const int angle_degrees = sink * 18 -90;
@@ -61,7 +58,6 @@ void drawVarioArrow(MCUFRIEND_kbv &tft, float sink) {
     old_end_x = end_x;
     old_end_y = end_y;
 }
-
 
 void drawVarioTriangle(MCUFRIEND_kbv &tft, float sink) {
     static int previous_triangle = 0;
