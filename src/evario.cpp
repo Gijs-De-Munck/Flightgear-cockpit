@@ -1,6 +1,6 @@
 #include <evario.hpp>
 
-void updateVario(MCUFRIEND_kbv &tft, float sink, float temperature) {
+void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature) {
     static float previous_sink = NAN;
     if(sink != previous_sink) {
         writeVarioValue(tft, sink);
