@@ -1,11 +1,12 @@
 #include <evario.hpp>
 
-void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC) {
+void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, float altitude) {
     writeVarioValue(tft, sink);
     drawVarioArrow(tft, sink);
     drawVarioTriangle(tft, sink);
     writeMC(tft, MC);
     writeTemperature(tft, temperature);
+    writeAltitude(tft, altitude);
 }
 
 void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
@@ -119,5 +120,23 @@ void writeMC(MCUFRIEND_kbv &tft, float MC) {
         tft.setTextColor(TFT_WHITE);
         tft.print(MC, 1);
         previous_MC = MC;
+    }
+}
+
+void writeAltitude(MCUFRIEND_kbv & tft, float altitude) {
+    static float previous_altitude = NAN;
+    if(altitude != previous_altitude) {
+        tft.setCursor(120, 210); //erase old altitude
+        tft.setTextColor(TFT_BLACK);
+        tft.setTextSize(2);
+        tft.print(altitude, 0);
+        tft.write('m');
+        
+        tft.setCursor(120, 210); //draw new altitude
+        tft.setTextColor(TFT_WHITE);
+        tft.setTextSize(2);
+        tft.print(altitude, 0);
+        tft.write('m');
+        previous_altitude = altitude;
     }
 }
