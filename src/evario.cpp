@@ -1,4 +1,5 @@
 #include <evario.hpp>
+#include <math.h>
 
 void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, float altitude, float airspeed) {
     writeVarioValue(tft, sink);
@@ -130,7 +131,7 @@ void writeAltitude(MCUFRIEND_kbv & tft, float altitude) {
         tft.setCursor(120, 210); //erase old altitude
         tft.setTextColor(TFT_BLACK);
         tft.setTextSize(2);
-        tft.print(altitude, 0);
+        tft.print(previous_altitude, 0);
         tft.write('m');
         
         tft.setCursor(120, 210); //draw new altitude
@@ -148,7 +149,7 @@ void writeAirspeed(MCUFRIEND_kbv & tft, float airspeed) {
         tft.setCursor(120, 100); //erase old airspeed
         tft.setTextColor(TFT_BLACK);   
         tft.setTextSize(2);
-        tft.print(airspeed, 0);
+        tft.print(previous_airspeed, 0);
         tft.write('k');
         tft.write('m');
         tft.write('/');

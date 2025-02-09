@@ -2,10 +2,13 @@
 #include <MCUFRIEND_kbv.h>
 #include <evario.hpp>
 #include <instruments.hpp>
+#include <fetchdata.hpp>
+#include <math.h>
 
 MCUFRIEND_kbv tft;
 
 void setup() {
+  Serial.begin(115200);
   uint16_t ID = tft.readID();
   tft.begin(ID);
   tft.setRotation(0); // Portrait
@@ -18,10 +21,15 @@ void setup() {
 }
 
 void loop() {
-    float sink = 4;
-    float temperature = 25;
-    float MC = 2;
-    float altitude = 100;
-    float airspeed = 100;
+    static float sink = 0;
+    static float temperature = 0;
+    static float MC = 0;
+    static float altitude = 0;
+    static float airspeed = 0;
+    static float heading = 0;
+    static float pitch = 0;
+    static float roll = 0;
+    fetchdata(altitude, heading, pitch, roll, sink, airspeed);
+
     updateEVario(tft, sink, temperature, MC, altitude, airspeed);
 }
