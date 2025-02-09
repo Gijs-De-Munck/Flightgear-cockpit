@@ -18,9 +18,10 @@ void setup() {
 }
 
 void loop() {
-    float sink = -4;
+    float sink = 4;
     float temperature = 25;
     float MC = 2;
     float altitude = 100;
-    updateEVario(tft, sink, temperature, MC, altitude);
+    float airspeed = 100;
+    updateEVario(tft, sink, temperature, MC, altitude, airspeed);
 }

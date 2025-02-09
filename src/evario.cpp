@@ -1,12 +1,13 @@
 #include <evario.hpp>
 
-void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, float altitude) {
+void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, float altitude, float airspeed) {
     writeVarioValue(tft, sink);
     drawVarioArrow(tft, sink);
     drawVarioTriangle(tft, sink);
     writeMC(tft, MC);
     writeTemperature(tft, temperature);
     writeAltitude(tft, altitude);
+    writeAirspeed(tft, airspeed);
 }
 
 void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
@@ -138,5 +139,29 @@ void writeAltitude(MCUFRIEND_kbv & tft, float altitude) {
         tft.print(altitude, 0);
         tft.write('m');
         previous_altitude = altitude;
+    }
+}
+
+void writeAirspeed(MCUFRIEND_kbv & tft, float airspeed) {
+    static float previous_airspeed = NAN;
+    if(airspeed != previous_airspeed) {
+        tft.setCursor(120, 100); //erase old airspeed
+        tft.setTextColor(TFT_BLACK);   
+        tft.setTextSize(2);
+        tft.print(airspeed, 0);
+        tft.write('k');
+        tft.write('m');
+        tft.write('/');
+        tft.write('h');
+
+        tft.setCursor(120, 100); //draw new airspeed
+        tft.setTextColor(TFT_WHITE);    
+        tft.setTextSize(2);
+        tft.print(airspeed, 0);
+        tft.write('k');
+        tft.write('m');
+        tft.write('/');
+        tft.write('h');
+        previous_airspeed = airspeed;
     }
 }
