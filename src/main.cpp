@@ -10,7 +10,6 @@ void setup() {
   tft.begin(ID);
   tft.setRotation(0); // Portrait
 
-    // Draw a static clock face for reference (if needed)
   tft.fillScreen(TFT_BLACK);
   tft.drawCircle(160, 160, 140, TFT_WHITE);
   tft.fillRect(160, 0, 180, 320, TFT_BLACK);
