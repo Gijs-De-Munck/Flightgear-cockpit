@@ -1,13 +1,11 @@
 #include <evario.hpp>
 
-void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature) {
-    static float previous_sink = NAN;
-    if(sink != previous_sink) {
-        writeVarioValue(tft, sink);
-        drawVarioArrow(tft, sink);
-        drawVarioTriangle(tft, sink);
-        writeTemperature(tft, temperature);
-    }
+void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC) {
+    writeVarioValue(tft, sink);
+    drawVarioArrow(tft, sink);
+    drawVarioTriangle(tft, sink);
+    writeMC(tft, MC);
+    writeTemperature(tft, temperature);
 }
 
 void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
@@ -99,5 +97,27 @@ void writeTemperature(MCUFRIEND_kbv &tft, float temperature) {
         tft.print(temperature, 1);
         tft.write('C');
         previous_temperature = temperature;
+    }
+}
+
+void writeMC(MCUFRIEND_kbv &tft, float MC) {
+    static float previous_MC = NAN;
+    tft.setCursor(10, 300);
+    tft.setTextSize(2);
+    tft.setTextColor(TFT_WHITE);
+    tft.write('M');
+    tft.write('C');
+    tft.setCursor(31, 300);
+    tft.write(':');
+
+    if(MC != previous_MC) {
+        tft.setCursor(10, 300);
+        tft.setTextSize(2);
+        tft.setTextColor(TFT_BLACK);
+        tft.print(previous_MC, 1);
+        tft.setCursor(40, 300);
+        tft.setTextColor(TFT_WHITE);
+        tft.print(MC, 1);
+        previous_MC = MC;
     }
 }

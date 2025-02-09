@@ -18,5 +18,6 @@ void setup() {
 void loop() {
     float sink = 0;
     float temperature = 0;
-    updateEVario(tft, sink, temperature);
+    float MC = 0;
+    updateEVario(tft, sink, temperature, MC);
 }
