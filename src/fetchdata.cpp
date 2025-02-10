@@ -1,3 +1,4 @@
+#include <fetchdata.hpp>
 #include <Arduino.h>
 
 void fetchdata(float &altitude, float &heading, float &pitch, float &roll, float & sink, float &airspeed) {
