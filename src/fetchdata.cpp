@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <fetchdata.hpp>
 
 void fetchdata(float &altitude, float &sink, float &airspeed) {
     bool gotAltitude = false, gotSink = false, gotAirspeed = false;
