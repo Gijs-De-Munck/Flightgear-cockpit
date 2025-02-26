@@ -12,7 +12,7 @@ void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, f
 }
 
 void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
-    static float previous_sink = NAN;
+    static float previous_sink = 1;
 
     tft.setTextSize(4);
     if(sink != previous_sink) { // Only erase if old value is different than new value should become
@@ -29,45 +29,59 @@ void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
 }
 
 void drawVarioArrow(MCUFRIEND_kbv &tft, float sink) {
-    const int angle_degrees = sink * 18 -90;
-    const int cx = 160;       // Center of the clock
-    const int cy = 160;
-    const int length = 50;    // Length of the hand
-    const int width = 5; 
-    const int start_offset = 85; // Distance from the center to start the line
+    if(sink > 5) {
+        sink = 5;
+    }
 
-    static int old_start_x_1, old_start_y_1, old_start_x_2, old_start_y_2, old_end_x, old_end_y; // To track previous hand position
+    if(sink < -5) {
+        sink = -5;
+    }
 
-    float angle_radians = angle_degrees * PI / 180.0;
-    float cos_angle = cos(angle_radians);
-    float sin_angle = sin(angle_radians);
+    static float previous_sink = 1;
 
-    int start_x_1 = cx + start_offset * sin_angle - width * cos_angle;
-    int start_y_1 = cy - start_offset * cos_angle - width * sin_angle;
-    int start_x_2 = cx + start_offset * sin_angle + width * cos_angle;
-    int start_y_2 = cy - start_offset * cos_angle + width * sin_angle;
-    int end_x = cx + (start_offset + length) * sin_angle;
-    int end_y = cy - (start_offset + length) * cos_angle;
+    if(fabs(sink - previous_sink) > 1 && !isnan(sink)) {
+        const int angle_degrees = sink * 18 -90;
+        const int cx = 160;       // Center of the clock
+        const int cy = 160;
+        const int length = 50;    // Length of the hand
+        const int width = 5; 
+        const int start_offset = 85; // Distance from the center to start the line
 
-    if (old_start_x_1 != start_x_1 && old_start_y_1 != start_y_1 && old_start_x_2 != start_x_2 && old_start_y_2 != start_y_2 && old_end_x != end_x && old_end_y != end_y) { // Only erase if old hand is different than new hand should become
-        tft.fillTriangle(old_start_x_1, old_start_y_1, old_start_x_2, old_start_y_2, old_end_x, old_end_y, TFT_BLACK);
+        static int old_start_x_1, old_start_y_1, old_start_x_2, old_start_y_2, old_end_x, old_end_y; // To track previous hand position
+
+        float angle_radians = angle_degrees * PI / 180.0;
+        float cos_angle = cos(angle_radians);
+        float sin_angle = sin(angle_radians);
+
+        int start_x_1 = cx + start_offset * sin_angle - width * cos_angle;
+        int start_y_1 = cy - start_offset * cos_angle - width * sin_angle;
+        int start_x_2 = cx + start_offset * sin_angle + width * cos_angle;
+        int start_y_2 = cy - start_offset * cos_angle + width * sin_angle;
+        int end_x = cx + (start_offset + length) * sin_angle;
+        int end_y = cy - (start_offset + length) * cos_angle;
+
+        if (old_start_x_1 != start_x_1 && old_start_y_1 != start_y_1 && old_start_x_2 != start_x_2 && old_start_y_2 != start_y_2 && old_end_x != end_x && old_end_y != end_y) { // Only erase if old hand is different than new hand should become
+            tft.fillTriangle(old_start_x_1, old_start_y_1, old_start_x_2, old_start_y_2, old_end_x, old_end_y, TFT_BLACK);
     }
     
-    if (old_start_x_1 != start_x_1 && old_start_y_1 != start_y_1 && old_start_x_2 != start_x_2 && old_start_y_2 != start_y_2 && old_end_x != end_x && old_end_y != end_y) { // only draw new hand if anything has changed
-        tft.fillTriangle(start_x_1, start_y_1, start_x_2, start_y_2, end_x, end_y, TFT_RED);
+        if (old_start_x_1 != start_x_1 && old_start_y_1 != start_y_1 && old_start_x_2 != start_x_2 && old_start_y_2 != start_y_2 && old_end_x != end_x && old_end_y != end_y) { // only draw new hand if anything has changed
+            tft.fillTriangle(start_x_1, start_y_1, start_x_2, start_y_2, end_x, end_y, TFT_RED);
+        }
+        old_start_x_1 = start_x_1;
+        old_start_y_1 = start_y_1;
+        old_start_x_2 = start_x_2;
+        old_start_y_2 = start_y_2;
+        old_end_x = end_x;
+        old_end_y = end_y;
+
+        previous_sink = sink;
     }
-    old_start_x_1 = start_x_1;
-    old_start_y_1 = start_y_1;
-    old_start_x_2 = start_x_2;
-    old_start_y_2 = start_y_2;
-    old_end_x = end_x;
-    old_end_y = end_y;
 }
 
 void drawVarioTriangle(MCUFRIEND_kbv &tft, float sink) {
     static int previous_triangle = 0;
 
-    if(sink < 0  && previous_triangle != -1) {
+    if(sink < 0  && previous_triangle != -1 && !isnan(sink)) {
         previous_triangle = -1;
         tft.fillTriangle(120, 175, 185, 175, 152.5, 200, TFT_WHITE);
         tft.fillTriangle(120, 142, 185, 142, 152.5, 117, TFT_BLACK);
@@ -88,8 +102,8 @@ void drawVarioTriangle(MCUFRIEND_kbv &tft, float sink) {
 }
 
 void writeTemperature(MCUFRIEND_kbv &tft, float temperature) {
-    static float previous_temperature = NAN;
-    if(temperature != previous_temperature) {
+    static float previous_temperature = 1;
+    if(fabs(temperature - previous_temperature) > 0.1 && !isnan(temperature)) {
         tft.setCursor(10, 10);
         tft.setTextSize(2);
         tft.setTextColor(TFT_BLACK);
@@ -104,16 +118,17 @@ void writeTemperature(MCUFRIEND_kbv &tft, float temperature) {
 }
 
 void writeMC(MCUFRIEND_kbv &tft, float MC) {
-    static float previous_MC = NAN;
-    tft.setCursor(10, 300);
-    tft.setTextSize(2);
-    tft.setTextColor(TFT_WHITE);
-    tft.write('M');
-    tft.write('C');
-    tft.setCursor(31, 300);
-    tft.write(':');
-
-    if(MC != previous_MC) {
+    static float previous_MC = 1;
+    if(MC == 0) {
+        tft.setCursor(10, 300);
+        tft.setTextSize(2);
+        tft.setTextColor(TFT_WHITE);
+        tft.write('M');
+        tft.write('C');
+        tft.setCursor(31, 300);
+        tft.write(':');
+    }
+    if(fabs(MC - previous_MC) > 0.1 && !isnan(MC)) {
         tft.setCursor(10, 300);
         tft.setTextSize(2);
         tft.setTextColor(TFT_BLACK);
@@ -126,8 +141,8 @@ void writeMC(MCUFRIEND_kbv &tft, float MC) {
 }
 
 void writeAltitude(MCUFRIEND_kbv & tft, float altitude) {
-    static float previous_altitude = NAN;
-    if(altitude != previous_altitude) {
+    static float previous_altitude = 1;
+    if(fabs(altitude - previous_altitude) > 0.1 && !isnan(altitude)) {
         tft.setCursor(120, 210); //erase old altitude
         tft.setTextColor(TFT_BLACK);
         tft.setTextSize(2);
@@ -144,8 +159,8 @@ void writeAltitude(MCUFRIEND_kbv & tft, float altitude) {
 }
 
 void writeAirspeed(MCUFRIEND_kbv & tft, float airspeed) {
-    static float previous_airspeed = NAN;
-    if(airspeed != previous_airspeed) {
+    static float previous_airspeed = 1;
+    if(fabs(airspeed - previous_airspeed) > 0.1 && !isnan(airspeed)) {
         tft.setCursor(120, 100); //erase old airspeed
         tft.setTextColor(TFT_BLACK);   
         tft.setTextSize(2);
