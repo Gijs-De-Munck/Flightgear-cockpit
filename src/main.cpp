@@ -4,8 +4,11 @@
 #include <instruments.hpp>
 #include <fetchdata.hpp>
 #include <math.h>
+#include <elapsedMillis.h>
 
 MCUFRIEND_kbv tft;
+
+elapsedMillis elapsedtime; //resettable timer 
 
 static float sink = 0;
 static float temperature = 0;
@@ -30,6 +33,12 @@ void setup() {
 }
 
 void loop() {
-  updateEVario(tft, sink, temperature, MC, altitude, airspeed);
+  if(elapsedtime > 100) {
+    elapsedtime = 0;
+    updateEVario(tft, sink, temperature, MC, altitude, airspeed);
+  }
+
+else {
   fetchdata(altitude, heading, pitch, roll, sink, airspeed);
+  }
 }
