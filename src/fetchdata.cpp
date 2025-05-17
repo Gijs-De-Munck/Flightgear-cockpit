@@ -21,10 +21,10 @@ void fetchdata(float &altitude, float &heading, float &pitch, float &roll, float
                 value += lastChar;
         }
         // Process different commands
-        if (command == "altitude") {
+        if (command == "alt") {
             altitude = value.toFloat();
         } 
-        if (command == "heading") {
+        if (command == "hdg") {
             heading = value.toFloat();
         } 
         if (command == "pitch") {
@@ -33,10 +33,10 @@ void fetchdata(float &altitude, float &heading, float &pitch, float &roll, float
         if (command == "roll") {
             roll = value.toFloat();
         }
-        if (command == "vertical-speed") {
+        if (command == "sink") {
             sink = value.toFloat();
         }
-        if (command == "airspeed") {
+        if (command == "ias") {
             airspeed = value.toFloat();
         }
     }

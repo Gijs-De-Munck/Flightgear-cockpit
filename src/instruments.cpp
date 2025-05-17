@@ -1,6 +1,6 @@
 #include <instruments.hpp>
 
-void updateInstruments(float heading, float pitch, float roll, float sink, float airspeed) {
+/*void updateInstruments(float heading, float pitch, float roll, float sink, float airspeed) {
     stepVarioDial(sink);
     stepAltitudeDial(altitude);
     stepHeadingDial(headng);
@@ -26,4 +26,4 @@ void stepRollDial(float roll) {
 
 void stepAltitudeDial(float altitude) {
 
-}
+}*/

@@ -4,11 +4,8 @@
 #include <instruments.hpp>
 #include <fetchdata.hpp>
 #include <math.h>
-#include <elapsedMillis.h>
 
 MCUFRIEND_kbv tft;
-
-elapsedMillis elapsedtime; //resettable timer 
 
 static float sink = 0;
 static float temperature = 0;
@@ -20,7 +17,7 @@ static float pitch = 0;
 static float roll = 0;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   uint16_t ID = tft.readID();
   tft.begin(ID);
   tft.setRotation(0); // Portrait
@@ -33,12 +30,6 @@ void setup() {
 }
 
 void loop() {
-  if(elapsedtime > 100) {
-    elapsedtime = 0;
-    updateEVario(tft, sink, temperature, MC, altitude, airspeed);
-  }
-
-else {
+  updateEVario(tft, sink, temperature, MC, altitude, airspeed);
   fetchdata(altitude, heading, pitch, roll, sink, airspeed);
-  }
 }
