@@ -73,13 +73,13 @@ void stepHeadingDial(Stepper &headingStepper, float heading) {
     static int heading_stepper_state = 0;
     static int previous_heading_stepper_target = 0;
 
-    heading_stepper_target = heading / 360 * 2048;
+    heading_stepper_target = heading * 2048 / 360;
 
-    if(previous_heading_stepper_target > 270 && heading_stepper_target < 90) {
+    if(previous_heading_stepper_target == 359 && heading_stepper_target == 0) {
         heading_stepper_state = heading_stepper_state - 360;
     }
 
-    if(previous_heading_stepper_target < 90 && heading_stepper_target < 270) {
+    if(previous_heading_stepper_target == 0 && heading_stepper_target == 359) {
         heading_stepper_state = heading_stepper_state + 360;
     }
 

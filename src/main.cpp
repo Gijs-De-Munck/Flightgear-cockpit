@@ -10,8 +10,8 @@ MCUFRIEND_kbv tft;
 
 Stepper varioStepper(2048, 47, 51, 49, 53);
 Stepper altitudeStepper(2048, 46, 50, 48, 52);
-Stepper headingStepper(2048, 1, 2, 3, 4); //set correct stepper pins
-Stepper rollStepper(2048, 5, 6, 7, 8); //set correct stepper pins
+Stepper headingStepper(2048, 44, 40, 42, 38); //set correct stepper pins
+Stepper rollStepper(2048, 45, 41, 43, 39); //set correct stepper pins
 Stepper airspeedStepper(2048, 9, 10, 11, 12); //set correct stepper pins
 
 static float sink = 0;
