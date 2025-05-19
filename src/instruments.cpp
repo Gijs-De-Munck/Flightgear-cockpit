@@ -20,16 +20,16 @@ void stepVarioDial(Stepper &varioStepper, float sink) {
         sink_m = -5;
     }
     if(sink_m > -3 && sink_m < 3) {
-        vario_stepper_target = sink_m * 45 * (2048 / 360);
+        vario_stepper_target = sink_m * 45 / 360 * 2048;
     }
     if(sink_m < -3 || sink_m > 3) {
-        vario_stepper_target = sink_m * 45 * (2048 / 360);
+        vario_stepper_target = sink_m * 45 / 360 * 2048;
     }
     if(sink_m > 3) {
-        vario_stepper_target = 135 + 22.5 * (sink_m - 3) * (2048 / 360);
+        vario_stepper_target = 135 + 22.5 * (sink_m - 3) / 360 * 2048;
     }
     if(sink_m < -3) {
-        vario_stepper_target = 135 + 22.5 * (sink_m + 3) * (2048 / 360);
+        vario_stepper_target = 135 + 22.5 * (sink_m + 3) / 360 * 2048;
     }
     if(vario_stepper_state > vario_stepper_target) {
         vario_stepper_state--;
@@ -72,9 +72,37 @@ void stepHeadingDial(Stepper &headingStepper, float heading) {
 }
 
 void stepRollDial(Stepper &rollStepper, float roll) {
-
+    static int roll_stepper_target = 0;
+    static int roll_stepper_state = 0;
+    if(roll > 10) {
+        roll = 10;
+    }
+    if(roll < -10) {
+        roll = -10;
+    }
+    roll_stepper_target = roll / 360 * 2048;
+    roll_stepper_target = roll / 360 * 2048;
+    if(roll_stepper_state > roll_stepper_target) {
+        roll_stepper_state--;
+        rollStepper.step(-1);
+    }
+    if(roll_stepper_state < roll_stepper_target) {
+        roll_stepper_state++;
+        rollStepper.step(1);
+    }
 }
 
 void stepAirspeedDial(Stepper &airspeedStepper, float airspeed) {
+    static int airspeed_stepper_target;
+    static int airspeed_stepper_state;
+    float airspeed_km = airspeed * 1.852;
+    if(airspeed_km > 210) {
+        airspeed_km = 210;
+    }
+    if(airspeed_km < 60) {
 
+    }
+    if(airspeed_km < 60) {
+        
+    }
 }
