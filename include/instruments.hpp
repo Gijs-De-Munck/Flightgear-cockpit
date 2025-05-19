@@ -1,12 +1,14 @@
 #ifndef __INSTRUMENTS_HPP
 #define __INSTRUMENTS_HPP
 
-void updateInstruments(float heading, float pitch, float roll, float sink, float airspeed);
+#include <Stepper.h>
 
-void stepVarioDial(float sink);
-void stepAltitudeDial(float altitude);
-void stepHeadingDial(float heading);
-void stepRollDial(float roll);
-void stepAltitudeDial(float altitude);
+void updateInstruments(Stepper &varioStepper, Stepper &altitudeStepper, Stepper &headingStepper, Stepper &rollStepper, Stepper &airspeedStepper, float altitude, float heading, float roll, float sink, float airspeed);
+
+void stepVarioDial(Stepper &varioStepper, float sink);
+void stepAltitudeDial(Stepper &altitudeStepper, float altitude);
+void stepHeadingDial(Stepper &headingStepper, float heading);
+void stepRollDial(Stepper &rollStepper, float roll);
+void stepAirspeedDial(Stepper &airspeedStepper, float airspeed);
 
 #endif
