@@ -73,14 +73,14 @@ void stepHeadingDial(Stepper &headingStepper, float heading) {
     static int heading_stepper_state = 0;
     static int previous_heading_stepper_target = 0;
 
-    heading_stepper_target = heading * 2048 / 360;
+    heading_stepper_target = heading / 360 * 2048;
 
-    if(previous_heading_stepper_target == 359 && heading_stepper_target == 0) {
-        heading_stepper_state = heading_stepper_state - 360;
+    if(previous_heading_stepper_target > 2040 && heading_stepper_target < 10) {
+        heading_stepper_state = heading_stepper_state - 2048;
     }
 
-    if(previous_heading_stepper_target == 0 && heading_stepper_target == 359) {
-        heading_stepper_state = heading_stepper_state + 360;
+    if(previous_heading_stepper_target < 10 && heading_stepper_target > 2040) {
+        heading_stepper_state = heading_stepper_state + 2048
     }
 
     if(heading_stepper_state > heading_stepper_target) {
@@ -123,6 +123,7 @@ void stepRollDial(Stepper &rollStepper, float roll) {
 void stepAirspeedDial(Stepper &airspeedStepper, float airspeed) {
     static int airspeed_stepper_target;
     static int airspeed_stepper_state;
+    float airspeed_degrees;
 
     float airspeed_km = airspeed * 1.852; //conversion knots to km/h
 
@@ -130,11 +131,23 @@ void stepAirspeedDial(Stepper &airspeedStepper, float airspeed) {
         airspeed_km = 210;
     }
 
-    if(airspeed_km < 60) {
-        
+    // Updated calculation for airspeed_degrees:
+    if (airspeed_km <= 60) {
+        airspeed_degrees = airspeed_km * 1.5;
+    }
+    else {
+        airspeed_degrees = 60 * 1.5 + (airspeed_km - 60) * 1.8;
     }
 
-    if(airspeed_km < 60) {
-        
+    airspeed_stepper_target = airspeed_degrees / 360 * 2048;
+
+    if(airspeed_stepper_state > airspeed_stepper_target) {
+        airspeed_stepper_state--;
+        airspeedStepper.step(-1);
+    }
+
+    if(airspeed_stepper_state < airspeed_stepper_target) {
+        airspeed_stepper_state++;
+        airspeedStepper.step(1);
     }
 }
