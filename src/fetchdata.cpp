@@ -1,8 +1,8 @@
 #include <fetchdata.hpp>
 #include <Arduino.h>
 
-void fetchdata(float &altitude, float &heading, float &pitch, float &roll, float & sink, float &airspeed) {
-    if (Serial.available() > 14) { // Wait until there are enough bytes available
+void fetchdata(float &altitude, float &heading, float & sink, float &airspeed, float &temperature) {
+    if (Serial.available() > 10) { // Wait until there are enough bytes available
         String command;
         String value;
         char lastChar = '\0';
@@ -26,18 +26,15 @@ void fetchdata(float &altitude, float &heading, float &pitch, float &roll, float
         } 
         if (command == "hdg") {
             heading = value.toFloat();
-        } 
-        if (command == "pitch") {
-            pitch = value.toFloat();
-        } 
-        if (command == "roll") {
-            roll = value.toFloat();
         }
         if (command == "sink") {
             sink = value.toFloat();
         }
         if (command == "ias") {
             airspeed = value.toFloat();
+        }
+        if (command == "temp") {
+            temperature = value.toFloat();
         }
     }
 }

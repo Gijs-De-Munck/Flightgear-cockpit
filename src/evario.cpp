@@ -1,7 +1,7 @@
 #include <evario.hpp>
 #include <math.h>
 
-void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, float altitude, float airspeed) {
+void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, float altitude, float airspeed, float heading) {
     writeVarioValue(tft, sink);
     drawVarioArrow(tft, sink);
     drawVarioTriangle(tft, sink);
@@ -14,9 +14,8 @@ void updateEVario(MCUFRIEND_kbv &tft, float sink, float temperature, float MC, f
 void writeVarioValue(MCUFRIEND_kbv &tft, float sink) {
     static float previous_sink = 1;
     float sink_m = sink * 0.3048;
-
     tft.setTextSize(4);
-    if(sink_m != previous_sink) { // Only draw new value if anything has changed
+    if(fabs(sink_m - previous_sink) > 0.1) { // Only draw new value if anything has changed
         tft.setCursor(120, 145);
         tft.setTextColor(TFT_BLACK);
         tft.print(abs(previous_sink), 1);
@@ -37,8 +36,8 @@ void drawVarioArrow(MCUFRIEND_kbv &tft, float sink) {
         sink_m = -5;
     }
     static float previous_sink = 1;
-    if(fabs(sink - previous_sink) > 1 && !isnan(sink)) {
-        const int angle_degrees = sink_m * 18 - 90;
+    if(fabs(sink - previous_sink) > 0.1 && !isnan(sink)) {
+        const int angle_degrees = sink_m * 25.2 - 90;
         const int cx = 160;       // Center of the clock
         const int cy = 160;
         const int length = 50;    // Length of the hand
@@ -78,21 +77,21 @@ void drawVarioTriangle(MCUFRIEND_kbv &tft, float sink) {
     static int previous_triangle = 0;
     float sink_m = sink * 0.3048;
 
-    if(sink_m < 0  && previous_triangle != -1 && !isnan(sink)) {
+    if(sink_m < -0.05 && previous_triangle != -1) {
         previous_triangle = -1;
         tft.fillTriangle(120, 175, 185, 175, 152.5, 200, TFT_WHITE);
         tft.fillTriangle(120, 142, 185, 142, 152.5, 117, TFT_BLACK);
     }
-    if(sink_m > 0 && previous_triangle != 1) {
+    if(sink_m > 0.05 && previous_triangle != 1) {
         previous_triangle = 1;
         tft.fillTriangle(120, 175, 185, 175, 152.5, 200, TFT_BLACK);
         tft.fillTriangle(120, 142, 185, 142, 152.5, 117, TFT_WHITE);
     }
-    if(sink_m == 0 && previous_triangle == 1) {
+    if(sink_m > -0.05 && sink_m < 0.05 && previous_triangle == 1) {
         tft.fillTriangle(120, 142, 185, 142, 152.5, 117, TFT_BLACK);
         previous_triangle = 0;
     }
-    if(sink_m == 0 && previous_triangle == -1) {
+    if(sink_m > -0.05 && sink_m < 0.05 && previous_triangle == -1) {
         tft.fillTriangle(120, 175, 185, 175, 152.5, 200, TFT_BLACK);
         previous_triangle = 0;
     }
@@ -100,7 +99,8 @@ void drawVarioTriangle(MCUFRIEND_kbv &tft, float sink) {
 
 void writeTemperature(MCUFRIEND_kbv &tft, float temperature) {
     static float previous_temperature = 1;
-    if(fabs(temperature - previous_temperature) > 0.1 && !isnan(temperature)) {
+    float temperature_c =(temperature - 32) * 5.0 / 9.0; // Convert Fahrenheit to Celsius 
+    if(fabs(temperature_c - previous_temperature) > 0.1 && !isnan(temperature_c)) {
         tft.setCursor(10, 10);
         tft.setTextSize(2);
         tft.setTextColor(TFT_BLACK);
@@ -108,9 +108,9 @@ void writeTemperature(MCUFRIEND_kbv &tft, float temperature) {
         tft.write('C');
         tft.setCursor(10, 10);
         tft.setTextColor(TFT_WHITE);
-        tft.print(temperature, 1);
+        tft.print(temperature_c, 1);
         tft.write('C');
-        previous_temperature = temperature;
+        previous_temperature = temperature_c;
     }
 }
 

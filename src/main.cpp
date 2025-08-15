@@ -9,10 +9,10 @@
 MCUFRIEND_kbv tft;
 
 Stepper varioStepper(2048, 36, 32, 34, 30);
-Stepper altitudeStepper(2048, 46, 50, 48, 52);
+Stepper altitudeStepper(2048, 52, 48, 50, 46);
 Stepper headingStepper(2048, 44, 40, 42, 38); //set correct stepper pins
 Stepper rollStepper(2048, 45, 41, 43, 39); //set correct stepper pins
-Stepper airspeedStepper(2048, 47, 51, 49, 53); //set correct stepper pins
+Stepper airspeedStepper(2048, 53, 49, 51, 47); //set correct stepper pins
 
 static float sink = 0;
 static float temperature = 0;
@@ -38,11 +38,11 @@ void setup() {
 	altitudeStepper.setSpeed(10);
 	headingStepper.setSpeed(10);
 	rollStepper.setSpeed(10);
-	airspeedStepper.setSpeed(10);
+	airspeedStepper.setSpeed(20);
 }
 
 void loop() {
-  updateEVario(tft, sink, temperature, MC, altitude, airspeed);
-  fetchdata(altitude, heading, pitch, roll, sink, airspeed);
+  updateEVario(tft, sink, temperature, MC, altitude, airspeed, heading);
+  fetchdata(altitude, heading, sink, airspeed, temperature);
 	updateInstruments(varioStepper, altitudeStepper, headingStepper, rollStepper, airspeedStepper, altitude, heading, roll, sink, airspeed);
 }

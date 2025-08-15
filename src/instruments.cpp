@@ -1,5 +1,6 @@
 #include <instruments.hpp>
 #include <Stepper.h>
+#include <InterpolationLib.h>
 
 void updateInstruments(Stepper &varioStepper, Stepper &altitudeStepper, Stepper &headingStepper, Stepper &rollStepper, Stepper &airspeedStepper, float altitude, float heading, float roll, float sink, float airspeed) {
     stepVarioDial(varioStepper, sink);
@@ -9,9 +10,12 @@ void updateInstruments(Stepper &varioStepper, Stepper &altitudeStepper, Stepper 
     stepAirspeedDial(airspeedStepper, airspeed);
 }
 
+//finished
+
 void stepVarioDial(Stepper &varioStepper, float sink) {
     static int vario_stepper_state = 0;
     static int vario_stepper_target = 0;
+    static float vario_stepper_degrees = 0;
 
     float sink_m = sink * 0.3048; //conversion ft/s to m/s
 
@@ -23,21 +27,9 @@ void stepVarioDial(Stepper &varioStepper, float sink) {
         sink_m = -5;
     }   //setting maximum values for dial
 
-    if(sink_m > -3 && sink_m < 3) {
-        vario_stepper_target = sink_m * 45 / 360 * 2048;
-    }
+    vario_stepper_degrees = sink_m * 27.1;
 
-    if(sink_m < -3 || sink_m > 3) {
-        vario_stepper_target = sink_m * 45 / 360 * 2048;
-    }
-
-    if(sink_m > 3) {
-        vario_stepper_target = 135 + 22.5 * (sink_m - 3) / 360 * 2048;
-    }
-
-    if(sink_m < -3) {
-        vario_stepper_target = 135 + 22.5 * (sink_m + 3) / 360 * 2048;
-    }
+    vario_stepper_target = vario_stepper_degrees / 360 * 2048;
 
     if(vario_stepper_state > vario_stepper_target) {
         vario_stepper_state--;
@@ -49,6 +41,8 @@ void stepVarioDial(Stepper &varioStepper, float sink) {
         varioStepper.step(1);
     }
 }
+
+//finished
 
 void stepAltitudeDial(Stepper &altitudeStepper, float altitude) {
     static int altitude_stepper_state = 0;
@@ -68,6 +62,8 @@ void stepAltitudeDial(Stepper &altitudeStepper, float altitude) {
     }
 }
 
+//wraparound not implemented yet
+
 void stepHeadingDial(Stepper &headingStepper, float heading) {
     static int heading_stepper_target = 0;
     static int heading_stepper_state = 0;
@@ -75,13 +71,13 @@ void stepHeadingDial(Stepper &headingStepper, float heading) {
 
     heading_stepper_target = heading / 360 * 2048;
 
-    if(previous_heading_stepper_target > 2040 && heading_stepper_target < 10) {
+/*    if(previous_heading_stepper_target > 2040 && heading_stepper_target < 10) {
         heading_stepper_state = heading_stepper_state - 2048;
     }
 
     if(previous_heading_stepper_target < 10 && heading_stepper_target > 2040) {
-        heading_stepper_state = heading_stepper_state + 2048
-    }
+        heading_stepper_state = heading_stepper_state + 2048;
+    }*/
 
     if(heading_stepper_state > heading_stepper_target) {
         heading_stepper_state--;
@@ -95,16 +91,16 @@ void stepHeadingDial(Stepper &headingStepper, float heading) {
 
     previous_heading_stepper_target = heading_stepper_target;
 }
-
+//no roll on new instrument panel, so commenting out
 void stepRollDial(Stepper &rollStepper, float roll) {
     static int roll_stepper_target = 0;
     static int roll_stepper_state = 0;
 
-    if(roll > 10) {
-        roll = 10;
+    if(roll > 20) {
+        roll = 20;
     }
-    if(roll < -10) {
-        roll = -10;
+    if(roll < -20) {
+        roll = -20;
     }
 
     roll_stepper_target = roll / 360 * 2048;
@@ -120,6 +116,8 @@ void stepRollDial(Stepper &rollStepper, float roll) {
     }
 }
 
+//new logic for new airspeed dial
+
 void stepAirspeedDial(Stepper &airspeedStepper, float airspeed) {
     static int airspeed_stepper_target;
     static int airspeed_stepper_state;
@@ -127,17 +125,16 @@ void stepAirspeedDial(Stepper &airspeedStepper, float airspeed) {
 
     float airspeed_km = airspeed * 1.852; //conversion knots to km/h
 
-    if(airspeed_km > 210) {
-        airspeed_km = 210;
+    if(airspeed_km > 320) {
+        airspeed_km = 320;
     }
 
     // Updated calculation for airspeed_degrees:
-    if (airspeed_km <= 60) {
-        airspeed_degrees = airspeed_km * 1.5;
-    }
-    else {
-        airspeed_degrees = 60 * 1.5 + (airspeed_km - 60) * 1.8;
-    }
+    const int numValues = 10;
+    double speedValues[10] = {0, 40, 60, 80, 100, 120, 150, 200, 250, 300};
+    double degreesValues[10] = {0, 28.7, 75.9, 128.3, 181, 225.5, 290.4, 398.2, 449.6, 503.5};
+
+    airspeed_degrees = Interpolation::ConstrainedSpline(speedValues, degreesValues, numValues, airspeed_km);
 
     airspeed_stepper_target = airspeed_degrees / 360 * 2048;
 
